@@ -1,33 +1,54 @@
 <script>
-	import { setContext } from 'svelte';
+  import { setContext } from "svelte";
   // components
-	import Navbar from "./Navbar.svelte";
-	import ExpensesList from './ExpensesList.svelte';
-	import Totals from './Totals.svelte';
-	// data
+  import Navbar from "./Navbar.svelte";
+  import ExpensesList from "./ExpensesList.svelte";
+  import Totals from "./Totals.svelte";
+  import ExpenseForm from "./ExpenseForm.svelte";
+  // data
   import expensesData from "./expenses";
   // variables
 	let expenses = [...expensesData];
-	// reactive
-	$: total = expenses.reduce((acc, curr) => {
-		return (acc += curr.amount)
-	},0);
-	// functions
-	function removeExpense(id) {
-		expenses = expenses.filter(item => item.id !== id)
+	// set editing variables
+	let setName = '';
+	let setAmount = null;
+	let setId = null;
+  // reactive
+  $: total = expenses.reduce((acc, curr) => {
+    return (acc += curr.amount);
+  }, 0);
+  // functions
+  function removeExpense(id) {
+    expenses = expenses.filter(item => item.id !== id);
+  }
+  function clearExpenses() {
+    expenses = [];
+  }
+  function addExpense({name, amount}) {
+		let expense = {
+			id: Math.random() * Date.now(),
+			name,
+			amount
+		}
+		expenses = [expense, ...expenses];
 	}
-	function clearExpenses() {
-		expenses = [];
+	function setModifiedExpense(id) {
+		let expense = expenses.find(item => item.id === id);
+		setId = expense.id;
+		setName = expense.name;
+		setAmount = expense.ammount;
 	}
-	// context
-	setContext('remove', removeExpense)
+  // context
+	setContext("remove", removeExpense);
+	setContext("modify", setModifiedExpense);
 </script>
 
 <Navbar />
 <main class="content">
-	<Totals title="total des dépenses" {total} />
-	<ExpensesList {expenses} />
-	<button class="btn btn-primary btn-block" on:click={clearExpenses}>
-		Supprimer la liste
-	</button>
+  <ExpenseForm {addExpense} />
+  <Totals title="total des dépenses" {total} />
+  <ExpensesList {expenses} />
+  <button class="btn btn-primary btn-block" on:click={clearExpenses}>
+    Supprimer la liste
+  </button>
 </main>
