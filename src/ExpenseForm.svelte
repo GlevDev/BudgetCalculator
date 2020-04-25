@@ -1,11 +1,18 @@
 <script>
   import Title from "./Title.svelte";
-  let name = "";
-  let amount = null;
+  export let name = "";
+  export let amount = null;
+  export let isEditing = false;
+  export let editExpense;
   export let addExpense;
+  export let hideForm;
   $: isEmpty = !name || !amount;
   function handleSubmit() {
-    addExpense({name, amount});
+    if(isEditing) {
+      editExpense({name, amount});
+    } else {
+      addExpense({ name, amount });
+    }
     name = "";
     amount = null;
   }
@@ -25,8 +32,14 @@
     {#if isEmpty}
       <p class="form-empty">Merci de remplir l'ensemble des champs</p>
     {/if}
-    <button type="submit" class="btn btn-block" disabled={isEmpty} class:disabled={isEmpty}>Ajouter</button>
-    <button type="button" class="close-btn">
+    <button
+      type="submit"
+      class="btn btn-block"
+      disabled={isEmpty}
+      class:disabled={isEmpty}>
+      {#if isEditing}Modifier{:else}Ajouter{/if}
+    </button>
+    <button type="button" class="close-btn" on:click={hideForm}>
       <i class="fas fa-times" />
       <span>fermer</span>
     </button>
