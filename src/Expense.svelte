@@ -1,4 +1,6 @@
 <script>
+  import {blur,slide,scale,fade,fly} from 'svelte/transition';
+  import { quintOut } from 'svelte/easing'
   import { getContext } from 'svelte';
   export let id;
   export let name = "";
@@ -21,7 +23,7 @@
       </button>
     </h2>
     {#if displayAmount}
-      <h4>Montant : {amount}€</h4>
+      <h4 transition:slide>Montant : {amount}€</h4>
     {/if}
   </div>
   <div class="expense-buttons">
